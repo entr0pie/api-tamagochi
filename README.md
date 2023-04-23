@@ -1,5 +1,5 @@
 <p align="center"><img src="assets/tamagochi.gif" width="130"></p>
-<h2 align="center">Tamagochi</h2>
+<h2 align="center">API-Tamagochi</h2>
 
 
 > ⚠️ Atenção: esse projeto pertence à Universidade Positivo. A utilização do código só é permitida mediante a autorização expressa de seus envolvidos.
@@ -14,7 +14,7 @@ Um aplicativo para ajudar os pais e os filhos. Filhos tem tarefas, mas precisam 
 ## 🔎 Qual o escopo desse repositório?
 
 
-A API para o aplicativo das crianças. A parte onde os pais podem inserir as tarefas e cuidar dos filhos é em outro [repositório](https://bongo.cat/). 
+A API para o aplicativo das crianças. As interfaces gráficas de Android/IOS e a API dos pais ainda não foram criadas, mas logo estarão indicadas [aqui](https://bongo.cat).
 
 
 ## 🍪 Como contribuir?
@@ -35,5 +35,5 @@ Nesse repo, esses são os próximos tópicos a serem trabalhados:
 ## 📝 Licença
 
 
-Todo o código deste e dos outros repositórios pertence, única e exclusivamente à Universidade Positivo. Todos os direitos reservados.
+Todo o código deste e dos outros repositórios pertence única e exclusivamente à Universidade Positivo. Todos os direitos reservados.
 
