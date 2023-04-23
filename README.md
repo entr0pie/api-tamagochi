@@ -1,6 +1,5 @@
 <p align="center"><img src="assets/tamagochi.gif" width="130"></p>
 <h2 align="center">Tamagochi</h2>
-<hr>
 
 
 > ⚠️ Atenção: esse projeto pertence à Universidade Positivo. A utilização do código só é permitida mediante a autorização expressa de seus envolvidos.
