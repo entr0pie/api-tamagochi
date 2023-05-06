@@ -1,6 +1,8 @@
 #!/bin/python 
 
 from flask import Blueprint
+from flask import request
+
 import sqlite3
 
 parent = Blueprint("parent", __name__)
@@ -8,7 +10,8 @@ parent = Blueprint("parent", __name__)
 # Sign up, Login and reset password # 
 @parent.route("/parent/register", methods=["POST"])
 def createAccount():
-     return "";
+    print(request.form)
+    return request.data
 
 @parent.route("/parent/login", methods=["POST"])
 def login():

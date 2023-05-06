@@ -3,11 +3,15 @@
 from flask import Flask
 
 from modules.parent import parent
-from modules.child import child
+# from modules.child import child
 
 app = Flask("tamagochi")
-
 app.register_blueprint(parent)
-app.register_blueprint(child)
+
+# @app.route("/", methods=["GET"])
+# def mainRoute():
+#     return ""
+
+# app.register_blueprint(child)
 
 
