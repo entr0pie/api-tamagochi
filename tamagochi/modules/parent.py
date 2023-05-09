@@ -1,21 +1,43 @@
 #!/bin/python 
 
-from flask import Blueprint
-from flask import request
+from json import loads
 
-import sqlite3
+from flask import Blueprint
+from flask import request, jsonify
+
+from database.Authenticator import authParent, registerParent
+from database.Authenticator import checkPostRequest
 
 parent = Blueprint("parent", __name__)
 
 # Sign up, Login and reset password # 
 @parent.route("/parent/register", methods=["POST"])
 def createAccount():
-    print(request.form)
-    return request.data
+    data = request.get_json()
+    
+    if not checkPostRequest(data, ("email", "name", "surname", "password", "gender")):
+        return "Your request sucks!", 400
+   
+    status = registerParent(data.get('email'), data.get('name'), 
+                            data.get('surname'), data.get('password'), data.get('gender'))
+    
+    if status:
+        return "Successfully registered!"
 
-@parent.route("/parent/login", methods=["POST"])
+    else: 
+        return "Oh shit."
+
+@parent.route('/parent/login', methods=['POST'])
 def login():
-    return "";
+    data = request.get_json()
+    
+    if not checkPostRequest(data, ("user", "password")):
+        return "Your request sucks!", 400
+
+    if (authParent(data.get('user'), data.get('password'))):
+        return "You're logged in!"
+    
+    return "Permission Denied", 403
 
 @parent.route("/parent/reset_password", methods=["POST"])
 def resetPassword():
@@ -24,7 +46,9 @@ def resetPassword():
 # Child Management #
 @parent.route("/child/child", methods=["GET"])
 def checkChild():
-    return "";
+    cursor = get_cursor()
+    res = cursor.execute("PRAGMA table_info(pai)")
+    return str(res.fetchall())
 
 @parent.route("/child/add", methods=["POST"])
 def addChild():
