@@ -8,10 +8,6 @@ from bcrypt import gensalt, hashpw, checkpw
 DATABASE_PATH = "database/database.db"
 
 def authParent(user: str, password: str) -> bool:
-    """Authenticate the Parent user. 
-    Both arguments are the credentials 
-    given by the user, without hashing."""
-
     c = connect(DATABASE_PATH).cursor()
     
     c.execute('SELECT senha FROM pai WHERE email = ?', (user,))
@@ -46,6 +42,8 @@ def checkPostRequest(data: Dict[str, str], required_keys: Tuple[str], optional_k
 
     The 'optional_keys' stores the optional keys available for that
     request (example: ('is_robot'))
+
+    * Check if this function is really necessary *
     """
 
     all_keys = required_keys + optional_keys

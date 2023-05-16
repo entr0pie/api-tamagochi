@@ -15,8 +15,8 @@ parent = Blueprint("parent", __name__)
 def createAccount():
     data = request.get_json()
     
-    if not checkPostRequest(data, ("email", "name", "surname", "password", "gender")):
-        return "Your request sucks!", 400
+    # if not checkPostRequest(data, ("email", "name", "surname", "password", "gender")):
+    #     return "Your request sucks!", 400
    
     status = registerParent(data.get('email'), data.get('name'), 
                             data.get('surname'), data.get('password'), data.get('gender'))
@@ -31,8 +31,8 @@ def createAccount():
 def login():
     data = request.get_json()
     
-    if not checkPostRequest(data, ("user", "password")):
-        return "Your request sucks!", 400
+    # if not checkPostRequest(data, ("user", "password")):
+    #     return "Your request sucks!", 400
 
     if (authParent(data.get('user'), data.get('password'))):
         return "You're logged in!"
