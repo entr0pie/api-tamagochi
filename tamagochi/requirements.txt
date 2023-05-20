@@ -1,0 +1,4 @@
+flask
+mysql-connector-python
+argon2-cffi
+Flask-JWT

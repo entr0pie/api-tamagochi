@@ -2,18 +2,16 @@
 
 from flask import Flask
 
+from modules.parent import parent
+# from modules.child import child
+
 app = Flask("tamagochi")
+app.register_blueprint(parent)
 
-@app.route("/", methods=["GET"])
-def homepage():
-    return "<h1>Welcome to the new Tamagochi!<h1>";
+# @app.route("/", methods=["GET"])
+# def mainRoute():
+#     return ""
 
-@app.route("/auth/register", methods=["POST"])
-def register():
-    return "";
-
-@app.route("/auth/login", methods=["POST"])
-def login():
-    return "";
+# app.register_blueprint(child)
 
 
