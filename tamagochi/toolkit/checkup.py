@@ -14,23 +14,33 @@ parser.add_argument("--verbose", "-v", required=False, action='store_true', help
 args = parser.parse_args()
 
 verbose = lambda message: print(f"[VERBOSE] {message}") if args.verbose else None
-getTime = lambda: datetime.now().strftime("%H:%M:%S") 
-
-def checkStatus(response, expected_status) -> bool:
-    if response.status_code == expected_status:
-        print("ok")
-        return True 
-
-    print(f"expected {expected_status}, got {response.status_code}")
-    return False
+getTime = lambda: datetime.now().strftime("%H:%M:%S")
 
 print(f"({getTime()}) [INFO] Starting checkup...")
 
-print(f"({getTime()}) [TEST] Checking the / route... ", end="")
-checkStatus(get(args.HOST), 200)
+# print(f"({getTime()}) [TEST] Checking the /parent/register route (test@email.com:password) ... ", end="")
+register_data = {
+    "name":"Name",
+    "surname":"Surname",
+    "email":"test@email.com",
+    "password":"password",
+    "gender":"m"
+}
 
-print(f"({getTime()}) [TEST] Registering a new parent (davidbowie@email.com:bowiebowie)... ", end="")
+# response = post(f"{args.HOST}/parent/register", json=register_data)
+# print(response.status_code)
 
+print(f"({getTime()}) [TEST] Login in... ", end="")
+login_data = {
+    "email":"test@email.com",
+    "password":"password"
+}
 
-print(f"({getTime()}) [TEST] Checking the /parent/login route... ", end="")
+response = post(f"{args.HOST}/parent/login", json=login_data)
+auth_header = response.json()['access_token']
+print(auth_header)
+
+print(f"({getTime()}) [TEST] Checking the /parent/private route... ", end="")
+response = get(f"{args.HOST}/parent/protected", headers={"Authorization": f"Bearer {auth_header}"})
+print(response.content)
 

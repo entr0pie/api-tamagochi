@@ -7,10 +7,10 @@ from routes.parent import parent
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = token_hex(64)
+jwt = JWTManager(app)
 
 app.register_blueprint(parent)
 
-jwt = JWTManager(app)
 
 if __name__ == '__main__':
     app.run()

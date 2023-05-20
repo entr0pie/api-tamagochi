@@ -1,38 +1,29 @@
-from flask import Blueprint, request, current_app
-from flask_jwt_extended import JWTManager, create_access_token
+from flask import Blueprint, jsonify, request, current_app
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 from database.Database import SQLite3Manager
+from modules.internal import checkFields
 
 db = SQLite3Manager("./database/database.db")
 parent = Blueprint("parent", __name__, url_prefix="/parent")
 jwt = JWTManager()
 
-@parent.record_once
-def on_load(state):
-    jwt.init_app(state.app)
-
-def checkFields(data_obj, *fields):
-    for value in fields:
-        if data_obj.get(value) is None:
-            return False
-
-    return True
-
 @parent.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
+    result = db.query("SELECT count(*) FROM pai WHERE email = ? AND senha = ?", (data['email'], data['password']))
+    print(result)
+    if result[0][0] == 1:
+        access_token = create_access_token(identity=data["email"])
+        return jsonify(access_token=access_token)
     
-    if checkFields(data, 'password', 'email'):
-        return {'error': 'missing fields'}, 400
+    return "not here.", 403
 
-    email, password = data.get('email'), data.get('password')
-    entries_found = db.query('SELECT COUNT(*) FROM pai WHERE email = ? AND senha = ?', (email, password))[0][0]
-
-    if entries_found == 1:
-        access_token = create_access_token(identity=email)
-        return {'access_token': access_token}, 200
-    else:
-        return {'error': 'Invalid email or password'}, 401
+@parent.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(message=f"Hello, {current_user}. This is a protected route.")
 
 @parent.route("/register", methods=["POST"])
 def register():
@@ -45,5 +36,3 @@ def register():
              (name, surname, email, password, gender), type="change")
 
     return { "status": "registered" }
-
-
