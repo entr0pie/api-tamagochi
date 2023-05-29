@@ -12,18 +12,12 @@ jwt = JWTManager()
 def login():
     data = request.get_json()
     result = db.query("SELECT count(*) FROM pai WHERE email = ? AND senha = ?", (data['email'], data['password']))
-    print(result)
+    
     if result[0][0] == 1:
         access_token = create_access_token(identity=data["email"])
         return jsonify(access_token=access_token)
     
-    return "not here.", 403
-
-@parent.route("/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    current_user = get_jwt_identity()
-    return jsonify(message=f"Hello, {current_user}. This is a protected route.")
+    return { "error": "Permission Denied"}, 403
 
 @parent.route("/register", methods=["POST"])
 def register():
@@ -36,3 +30,9 @@ def register():
              (name, surname, email, password, gender), type="change")
 
     return { "status": "registered" }
+
+@parent.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(message=f"Hello, {current_user}. This is a protected route.")

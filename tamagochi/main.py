@@ -11,6 +11,5 @@ jwt = JWTManager(app)
 
 app.register_blueprint(parent)
 
-
 if __name__ == '__main__':
     app.run()

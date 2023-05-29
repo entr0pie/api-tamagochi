@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS "children_task" (
 	"id_task_fk"		INTEGER NOT NULL,
 	"is_done"			INTEGER NOT NULL DEFAULT 0 CHECK("is_done" IN (0, 1)),
 	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("id_tarefa_fk") REFERENCES "tarefa"("id_tarefa_pk") ON DELETE CASCADE,
+	FOREIGN KEY("id_task_fk") REFERENCES "tarefa"("id_task_pk") ON DELETE CASCADE,
 	FOREIGN KEY("id_children_fk") REFERENCES "children"("id_children_pk") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "log_mood" (
@@ -102,6 +102,6 @@ CREATE TABLE IF NOT EXISTS "log_mood" (
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("id_mood_fk") REFERENCES "mood"("id") ON DELETE CASCADE,
 	FOREIGN KEY("id_children_fk") REFERENCES "children"("id_children_pk") ON DELETE CASCADE,
-	FOREIGN KEY("id_children_tarefa_fk") REFERENCES "children_task"("id")
+	FOREIGN KEY("id_children_task_fk") REFERENCES "children_task"("id")
 );
 COMMIT;
