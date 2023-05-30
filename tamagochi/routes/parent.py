@@ -1,23 +1,31 @@
 from flask import Blueprint, jsonify, request, current_app
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-from database.Database import SQLite3Manager
+from sqlalchemy import and_, or_ 
+from sqlalchemy.exc import NoResultFound
+
+# from database.Database import SQLite3Manager
+from database.database import Parent, create_session
 from modules.internal import checkFields
 
-db = SQLite3Manager("./database/database.db")
+# db = SQLite3Manager("./database/database.db")
 parent = Blueprint("parent", __name__, url_prefix="/parent")
 jwt = JWTManager()
+
 
 @parent.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
-    result = db.query("SELECT count(*) FROM pai WHERE email = ? AND senha = ?", (data['email'], data['password']))
-    
-    if result[0][0] == 1:
+    session = create_session()
+   
+    try:
+        session.query(Parent).filter(and_(Parent.email == data['email'], Parent.password == data["password"])).one()
         access_token = create_access_token(identity=data["email"])
         return jsonify(access_token=access_token)
     
-    return { "error": "Permission Denied"}, 403
+    except NoResultFound:
+        return { "error": "Permission Denied"}, 403
+
 
 @parent.route("/register", methods=["POST"])
 def register():
@@ -26,7 +34,7 @@ def register():
     email, password = data.get('email'), data.get('password')
     gender = data.get('gender')
 
-    db.query('INSERT INTO pai (nome, sobrenome, email, senha, sexo) VALUES (?, ?, ?, ?, ?)',
+    db.query('INSERT INTO parent (name, sobrename, email, password, gender) VALUES (?, ?, ?, ?, ?)',
              (name, surname, email, password, gender), type="change")
 
     return { "status": "registered" }

@@ -2,8 +2,9 @@ BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS "parent" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"name"	TEXT NOT NULL,
-	"surname"	TEXT,
-	"password"	TEXT NOT NULL,
+	"surname"	TEXT NOT NULL,
+  "email" TEXT NOT NULL,
+  "password"	TEXT NOT NULL,
 	"gender"	TEXT NOT NULL DEFAULT 'n' CHECK("gender" IN ('f', 'm', 'n')),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
@@ -46,11 +47,11 @@ CREATE TABLE IF NOT EXISTS "tamagochi" (
 	"size"	INTEGER NOT NULL,
 	"id_children_fk"	INTEGER NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("head") REFERENCES "inventario"("id") ON UPDATE CASCADE,
-	FOREIGN KEY("chest") REFERENCES "inventario"("id") ON UPDATE CASCADE,
-	FOREIGN KEY("feet") REFERENCES "inventario"("id") ON UPDATE CASCADE,
-	FOREIGN KEY("glasses") REFERENCES "inventario"("id") ON UPDATE CASCADE,
-	FOREIGN KEY("scenario") REFERENCES "inventario"("id") ON UPDATE CASCADE,
+	FOREIGN KEY("head") REFERENCES "inventory"("id") ON UPDATE CASCADE,
+	FOREIGN KEY("chest") REFERENCES "inventory"("id") ON UPDATE CASCADE,
+	FOREIGN KEY("feet") REFERENCES "inventory"("id") ON UPDATE CASCADE,
+	FOREIGN KEY("glasses") REFERENCES "inventory"("id") ON UPDATE CASCADE,
+	FOREIGN KEY("scenario") REFERENCES "inventory"("id") ON UPDATE CASCADE,
 	FOREIGN KEY("id_children_fk") REFERENCES "children"("id") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "mood" (
@@ -90,7 +91,7 @@ CREATE TABLE IF NOT EXISTS "children_task" (
 	"id_task_fk"		INTEGER NOT NULL,
 	"is_done"			INTEGER NOT NULL DEFAULT 0 CHECK("is_done" IN (0, 1)),
 	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("id_task_fk") REFERENCES "tarefa"("id_task_pk") ON DELETE CASCADE,
+	FOREIGN KEY("id_task_fk") REFERENCES "task"("id_task_pk") ON DELETE CASCADE,
 	FOREIGN KEY("id_children_fk") REFERENCES "children"("id_children_pk") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "log_mood" (

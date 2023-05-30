@@ -10,7 +10,7 @@ DATABASE_PATH = "database/database.db"
 def authParent(user: str, password: str) -> bool:
     c = connect(DATABASE_PATH).cursor()
     
-    c.execute('SELECT senha FROM pai WHERE email = ?', (user,))
+    c.execute('SELECT password FROM parent WHERE email = ?', (user,))
     user_data = c.fetchone()
     
     if user_data:
@@ -23,7 +23,7 @@ def registerParent(email: str, name: str, surname: str, password: str, genre: st
     password = hashPassword(password)
 
     conn = connect(DATABASE_PATH)
-    conn.execute('INSERT INTO pai (email, nome, sobrenome, senha, sexo) VALUES (?, ?, ?, ?, ?)',
+    conn.execute('INSERT INTO parent (email, name, sobrename, password, gender) VALUES (?, ?, ?, ?, ?)',
                 (email, name, surname, password, genre))
 
     conn.commit()
