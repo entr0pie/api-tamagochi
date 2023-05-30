@@ -4,6 +4,8 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from sqlalchemy import and_, or_ 
 from sqlalchemy.exc import NoResultFound
 
+from bcrypt import hashpw, gensalt, checkpw 
+
 # from database.Database import SQLite3Manager
 from database.database import Parent, create_session
 from modules.internal import checkFields
@@ -12,30 +14,38 @@ from modules.internal import checkFields
 parent = Blueprint("parent", __name__, url_prefix="/parent")
 jwt = JWTManager()
 
-
 @parent.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
+    
     session = create_session()
-   
-    try:
-        session.query(Parent).filter(and_(Parent.email == data['email'], Parent.password == data["password"])).one()
+    parent = session.query(Parent).filter(Parent.email == data['email']).first()
+    session.close()
+    
+    if checkpw(data.get('password').encode(), parent.password):
         access_token = create_access_token(identity=data["email"])
         return jsonify(access_token=access_token)
-    
-    except NoResultFound:
-        return { "error": "Permission Denied"}, 403
 
+    return { "error": "Permission Denied" }, 403
+    
 
 @parent.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
-    name, surname = data.get('name'), data.get('surname')
-    email, password = data.get('email'), data.get('password')
-    gender = data.get('gender')
+    session = create_session()
+    
+    if session.query(Parent).filter(Parent.email == data.get('email')).first():
+        return { "error": "Account already registered" }, 403
 
-    db.query('INSERT INTO parent (name, sobrename, email, password, gender) VALUES (?, ?, ?, ?, ?)',
-             (name, surname, email, password, gender), type="change")
+    data['password'] = hashpw(data['password'].encode(), gensalt())
+
+    parent = Parent(name=data.get('name'), surname=data.get('surname'),
+                    email=data.get('email'), password=data.get('password'),
+                    gender=data.get('gender'))
+
+    session.add(parent)
+    session.commit()
+    session.close()
 
     return { "status": "registered" }
 
