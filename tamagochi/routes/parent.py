@@ -49,6 +49,14 @@ def register():
 
     return { "status": "registered" }
 
+@parent.route("/child/register")
+@jwt_required()
+def register_child():
+    session = create_session()
+    Parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
+
+
+
 @parent.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
