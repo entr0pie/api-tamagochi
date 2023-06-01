@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "children" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"name"	TEXT NOT NULL,
 	"surname"	TEXT,
-	"acess_token"	TEXT NOT NULL,
+	"access_token"	TEXT NOT NULL,
 	"balance"	INTEGER NOT NULL DEFAULT 0,
 	"gender"	TEXT NOT NULL DEFAULT 'n' CHECK("gender" IN ('f', 'm', 'n')),
 	"id_parent_fk"	INTEGER NOT NULL,
