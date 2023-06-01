@@ -17,17 +17,20 @@ jwt = JWTManager()
 @parent.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
-    
     session = create_session()
-    parent = session.query(Parent).filter(Parent.email == data['email']).first()
-    session.close()
     
-    if checkpw(data.get('password').encode(), parent.password):
-        access_token = create_access_token(identity=data["email"])
-        return jsonify(access_token=access_token)
+    try:
+        parent = session.query(Parent).filter(Parent.email == data['email']).one()
+        session.close()
+        
+        if checkpw(data.get('password').encode(), parent.password):
+            access_token = create_access_token(identity=data["email"])
+            return jsonify(access_token=access_token)
+    
+    except NoResultFound:
+        pass
 
     return { "error": "Permission Denied" }, 403
-    
 
 @parent.route("/register", methods=["POST"])
 def register():
