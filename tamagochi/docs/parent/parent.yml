@@ -1,0 +1,21 @@
+Login as a Parent
+Parent authentication to get a valid JWT
+---
+parameters:
+  - in: body
+    name: asdasdsadsadsay
+    description: "Request body"
+    required: true
+    schema:
+      type: object
+      properties:
+        property1:
+          type: string
+        property2:
+          type: integer
+
+responses:
+  200:
+    description: The response body contains a "access_token", used in the Authorization header. 
+  403:
+    description: Email or password are incorrect.

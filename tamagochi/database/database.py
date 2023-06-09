@@ -28,6 +28,15 @@ class Child(Base):
     gender = Column(String)
     id_parent_fk = Column(Integer, ForeignKey('parent.id'))
 
+class Task(Base):
+    __tablename__ = Base.metadata.tables['task']
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    description = Column(String)
+    period = Column(Integer)  # What this refers to?
+    frequency = Column(String)  # And this?
+    is_visible = Column(Integer)
+
 def create_session():
     Session = sessionmaker(bind=engine)
     return Session()

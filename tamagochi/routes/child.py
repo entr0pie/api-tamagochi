@@ -14,31 +14,7 @@ from modules.internal import checkFields
 child = Blueprint("child", __name__, url_prefix="/child")
 jwt = JWTManager()
 
-""" 
-The child routes really need the JWT?
-"""
-
-@child.route("/register", methods=["POST"])
-@jwt_required()
-def register():
-    data = request.get_json()
-    session = create_session()
-    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
-    
-    child = Child(name=data.get("name"), surname=data.get("surname"), 
-                  access_token=token_hex(32), balance=0, gender=data.get("gender"),
-                  id_parent_fk=parent.id)
-
-    access_token = child.access_token
-
-    session.add(child)
-    session.commit()
-    session.close()
-    
-    return access_token
-
 @child.route("/login", methods=["POST"])
-@jwt_required()
 def login():
     data = request.get_json()
     session = create_session()
