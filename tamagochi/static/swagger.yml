@@ -1,0 +1,154 @@
+swagger: "2.0"
+info:
+  title: Tamagochi API 
+  description: API for the Tamgochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
+  version: 1.0.0
+host: localhost 
+basePath: /
+schemes:
+  - http
+    
+tags:
+  - name: parent
+    description: Register Childs and create Tasks.
+  
+  - name: child
+    description: Customize your Tamagochi, complete Tasks and play minigames!" 
+
+paths:
+  /parent/register:
+    post:
+      tags: 
+        - parent
+      summary: Register a new Parent
+      description: 
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      parameters:
+      - name: Register Information 
+        in: body
+        description: JSON object with name, surname, email, password and gender.
+        required: true
+        schema:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: Matheus
+                surname:
+                    type: string
+                    example: Silva
+                email:
+                    type: string
+                    example: matheussilva@gmail.com
+                password:
+                    type: string
+                    example: strongpassword
+                gender:
+                    type: string
+                    enum: ['m', 'f', 'n']
+      responses:
+        403:
+          description: Account already registered. Returns a JSON object with the error.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+            example:
+                error: Account already registered
+
+        200:
+          description: Account created successfully. Returns a JSON object with the status.
+          schema:
+            type: object 
+            properties:
+                status:
+                    type: string
+            example:
+                status: registered
+    
+  /parent/login:
+    post:
+      tags:
+        - parent
+      summary: Authenticate as a Parent
+      description:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      parameters:
+        - name: Credentials 
+          in: body
+          description: JSON object with email and password.
+          required: true
+          schema:
+            type: object 
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+
+      responses:
+        200:
+          description: Login successfull. Returns a JSON with a \"access_token\" key, contaning the JWT.
+          schema:
+              type: object
+              properties:
+                  access_token:
+                      type: string
+              example:
+                  access_token: JWT_TOKEN 
+        403:
+          description: Email or password incorrect. Returns a error message.
+          schema:
+              type: object 
+              properties:
+                  error:
+                      type: string
+              example:
+                  error: Permission Denied
+
+  /parent/child/register:
+    post:
+      tags: 
+        - parent
+      summary: Register a new Child
+      description: 
+      consumes:
+        - application/json
+      produces:
+        - application/json
+    
+      parameters:  
+        - name: Child Data 
+          in: body
+          description: JSON object with name, surname, and gender of the Child.
+          required: true
+          schema:
+            type: object
+            properties:
+                name:
+                    type: string
+                surname:
+                    type: string
+                gender:
+                    type: string
+                    enum: ['m', 'f', 'n']
+
+      responses:
+        200:
+          description: Child registered successfully.
+          schema:
+            type: object 
+            properties:
+              child_token:
+                type: string
+              example:
+                child_token: 32_BYTES_TOKEN
