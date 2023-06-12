@@ -10,7 +10,6 @@ from flasgger import swag_from
 
 # from database.Database import SQLite3Manager
 from database.database import Parent, Child, Task, create_session
-from modules.internal import checkFields
 
 # db = SQLite3Manager("./database/database.db")
 parent = Blueprint("parent", __name__, url_prefix="/parent")
@@ -73,6 +72,7 @@ def registerChild():
     session.close()
     
     return {"child_token": access_token}
+
 
 @parent.route("/child/task/register")
 @jwt_required()

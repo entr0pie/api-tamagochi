@@ -2,36 +2,36 @@
 
 from os import getcwd
 from secrets import token_hex
-from flask import Flask, send_from_directory
-from flask_jwt_extended import JWTManager
 
+from flask import Flask, redirect, send_from_directory
+from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
 from routes.parent import parent
 from routes.child import child
 
+
 app = Flask(__name__)
-
-# app.config['SWAGGER']['openapi'] = '3.0.2'
-
 app.config['JWT_SECRET_KEY'] = token_hex(64)
 jwt = JWTManager(app)
 
 app.register_blueprint(parent)
 app.register_blueprint(child)
 
+
+@app.route("/", methods=["GET"])
+def sendToDocs():
+    return redirect("/docs")
+
 @app.route("/static/<path:filename>")
 def serverStatic():
     return send_from_directory("./static", safe_join(getcwd(), filename))
 
+
 FLASK_ROUTE = "/docs"
 SWAGGER_FILE = "/static/swagger.yml"
 
-swaggerui = get_swaggerui_blueprint(
-    FLASK_ROUTE, 
-    SWAGGER_FILE,
-)
-
+swaggerui = get_swaggerui_blueprint(FLASK_ROUTE, SWAGGER_FILE)
 app.register_blueprint(swaggerui)
 
 if __name__ == '__main__':

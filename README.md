@@ -2,38 +2,59 @@
 <h2 align="center">API-Tamagochi</h2>
 
 
-> ⚠️ Atenção: esse projeto pertence à Universidade Positivo. A utilização do código só é permitida mediante a autorização expressa de seus envolvidos.
+> An API written in Flask for the Tamagochi application, an initiative of the research and development group at Universidade Positivo in the year of 2022/2023.
 
+## Description
 
-## ❓ O que é o projeto? 
+The Tamagochi application is an educational tool designed to assist children with their daily tasks through a virtual pet, similar to a Tamagochi. This repository contains only the API, without the graphical interface.
 
+## Technologies Used
 
-Um aplicativo para ajudar os pais e os filhos. Filhos tem tarefas, mas precisam de algum incentivo. Esse app parece com o tamagochi, e sua função é lembrar os filhos das tarefas, recompensando-o com moedas virtuais, cosméticos e pequenos jogos. Mais informações no [Notion](https://www.notion.so/Bichinho-virtual-c36336edc60b421b832e46b7d529ea31).
+The following technologies and libraries were used in the development of this project:
 
+- Flask
+- SQLAlchemy
+- Swagger UI
+- SQLite3
+- JWT
+- Bcrypt
 
-## 🔎 Qual o escopo desse repositório?
+## Installation
 
+To set up the project on your local machine, follow these steps:
 
-A API para o aplicativo das crianças. As interfaces gráficas de Android/IOS e a API dos pais ainda não foram criadas, mas logo estarão indicadas [aqui](https://bongo.cat).
+1. Clone this repository.
+2. Enter in the `tamagochi` folder and install the project dependencies:
 
+```
+cd tamagochi 
+pip install -r requirements.txt
+```
 
-## 🍪 Como contribuir?
+3. Start the server: 
 
+```
+python3 main.py
+```
 
-A documentação do projeto (tanto a parte dos pais quanto dos filhos) fica [aqui](https://github.com/entr0pie/docs-tamagochi). 
+## Documentation
 
+To see our current goals and more information about the project, visit our [Notion page](https://www.notion.so/Bichinho-virtual-c36336edc60b421b832e46b7d529ea31).
 
-Nesse repo, esses são os próximos tópicos a serem trabalhados:
+The API documentation can be accessed at [`/docs`](http://localhost:5000/docs). From there, developers can understand the available endpoints and their functionalities.
 
+## Known Issues
 
-- [ ] Discussão e integração com o banco de dados (MySQL, SQlite, etc).
-- [ ] Validação da infraestrutura do banco. 
-- [ ] Sistemas de Login/Registro.
-- [ ] Implementação do token JWT.
+As the project is still in its early stages of development, there may be known issues or limitations. 
 
+## Future Plans
 
-## 📝 Licença
+The following are the planned future enhancements for the project:
 
+- [ ] Implement creation, editing, and deletion of tasks.
+- [ ] Create a separate JWT for the "Child" user.
+- [ ] Allow editing and deletion of the "Parent" and "Child" user.
 
-Todo o código deste e dos outros repositórios pertence única e exclusivamente à Universidade Positivo. Todos os direitos reservados.
+## License
 
+All the code in this and other repositories solely belongs to Universidade Positivo. All rights reserved.

@@ -3,7 +3,7 @@ info:
   title: Tamagochi API 
   description: API for the Tamgochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
   version: 1.0.0
-host: localhost 
+host: localhost:5000
 basePath: /
 schemes:
   - http
@@ -127,6 +127,13 @@ paths:
         - application/json
     
       parameters:  
+        - name: Authorization
+          in: header
+          description: JWT (Bearer token) in the Authorization header.
+          required: true
+          type: string
+          example: 'Bearer JWT_TOKEN'
+
         - name: Child Data 
           in: body
           description: JSON object with name, surname, and gender of the Child.
@@ -152,3 +159,44 @@ paths:
                 type: string
               example:
                 child_token: 32_BYTES_TOKEN
+
+  /child/login:
+    post:
+      tags:
+        - child
+      summary: Login as Child
+      description: Login as a Child with the access token provided by the Parent. Make sure to register the Child first. 
+      consumes:
+        - application/json
+      produces:
+        - application/json
+
+      parameters:
+        - name: Access Token 
+          in: body
+          description: The 32 bytes access token of the Child.
+          required: true
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                example: 32_BYTES_TOKEN
+      responses:
+        200:
+          description: Child logged successfully.
+          schema:
+            type: object
+            properties:
+              jwt_token:
+                type: string
+                example: JSON_WEB_TOKEN
+
+        403:
+          description: Access token is not valid.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Permission Denied

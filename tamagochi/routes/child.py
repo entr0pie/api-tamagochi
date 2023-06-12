@@ -4,12 +4,10 @@ from secrets import token_hex
 
 from flask import Blueprint, jsonify, request, current_app
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-
 from sqlalchemy import and_, or_ 
 from sqlalchemy.exc import NoResultFound
 
 from database.database import Parent, Child, create_session
-from modules.internal import checkFields
 
 child = Blueprint("child", __name__, url_prefix="/child")
 jwt = JWTManager()
