@@ -19,34 +19,28 @@ The following technologies and libraries were used in the development of this pr
 - JWT
 - Bcrypt
 
-## Installation
+## Installation (Docker)
 
 To set up the project on your local machine, follow these steps:
 
-1. Clone this repository.
-2. Enter in the `tamagochi` folder and install the project dependencies:
+1. Make sure you have [docker](https://docs.docker.com/engine/install/) and [docker compose](https://docs.docker.com/compose/install/) installed properly.
+2. Clone this repository.
+3. Inside the directory, run:
 
 ```
-cd tamagochi 
-pip install -r requirements.txt
+docker compose up --build
 ```
 
-3. Start the server: 
+Access your [localhost](http://localhost).
+
+4. (Optional) add the domains and subdomains to `/etc/hosts`
 
 ```
-python3 main.py
-```
+SERVER_ADDRESS=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' tamagochi-nginx-1)
 
-4. (Optional) If you want to generate a new database, run:
-
-```
-sqlite3 -init database/source.sql database/tamagochi.db
-```
-
-Or through Python:
-
-```
-python3 -c "import sqlite3; sqlite3.connect('database/tamagochi.db').cursor().executescript(open('database/source.sql').read()).close()"
+echo "$SERVER_ADDRESS tamagochi.up.br" >> /etc/hosts
+echo "$SERVER_ADDRESS parent.tamagochi.up.br" >> /etc/hosts
+echo "$SERVER_ADDRESS child.tamagochi.up.br" >> /etc/hosts
 ```
 
 ## Documentation
