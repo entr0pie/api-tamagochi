@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   title: Tamagochi API 
-  description: API for the Tamgochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
+  description: API for the Tamagochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
   version: 1.0.0
 host: localhost:5000
 basePath: /
@@ -13,7 +13,13 @@ tags:
     description: Register Childs and create Tasks.
   
   - name: child
-    description: Customize your Tamagochi, complete Tasks and play minigames!" 
+    description: Customize your Tamagochi, complete Tasks and play minigames!
+
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
 
 paths:
   /parent/register:
@@ -37,19 +43,20 @@ paths:
             properties:
                 name:
                     type: string
-                    example: Matheus
+                    example: Agostinho 
                 surname:
                     type: string
-                    example: Silva
+                    example: Carrara
                 email:
                     type: string
-                    example: matheussilva@gmail.com
+                    example: agostinho_carrara@gmail.com
                 password:
                     type: string
-                    example: strongpassword
+                    example: florianinhomeuamor  
                 gender:
                     type: string
                     enum: ['m', 'f', 'n']
+                    example: m
       responses:
         403:
           description: Account already registered. Returns a JSON object with the error.
@@ -92,8 +99,10 @@ paths:
             properties:
                 email:
                     type: string
+                    example: agostinho_carrara@gmail.com
                 password:
                     type: string
+                    example: florianinhomeuamor
 
       responses:
         200:
@@ -114,9 +123,43 @@ paths:
                       type: string
               example:
                   error: Permission Denied
+  
+  /parent/child:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - parent
+      summary: Returns all Childs registered
+      description: Returns all Childs registered for a Parent
+      produces:
+        - application/json
+
+      responses:
+        200:
+          description: Successfully fetched all Childs
+          schema:
+            type: array 
+            properties:
+              items:
+                $ref: '#/definitions/Child' 
+
+            example:
+                - access_token: "0d114f0224d2893700483a1de3a01463fb984fb4b841f11d9076ee7bd5b370c6"
+                  balance: 1560 
+                  gender: "m"
+                  name: "Florianinho"
+                  surname: "Carrara"
+                - access_token: "c33126d5da425f23fe4b5a7a9c89a86d7ecdd450f6bcbe4d16694da395ce6ff1"
+                  balance: 99999
+                  gender: "f"
+                  name: "Dona"
+                  surname: "Nenê"
 
   /parent/child/register:
     post:
+      security:
+        - BearerAuth: []
       tags: 
         - parent
       summary: Register a new Child
@@ -127,13 +170,6 @@ paths:
         - application/json
     
       parameters:  
-        - name: Authorization
-          in: header
-          description: JWT (Bearer token) in the Authorization header.
-          required: true
-          type: string
-          example: 'Bearer JWT_TOKEN'
-
         - name: Child Data 
           in: body
           description: JSON object with name, surname, and gender of the Child.
@@ -141,14 +177,17 @@ paths:
           schema:
             type: object
             properties:
-                name:
-                    type: string
-                surname:
-                    type: string
-                gender:
-                    type: string
-                    enum: ['m', 'f', 'n']
-
+                
+              name:
+                  type: string
+                  example: "Florianinho"
+              surname:
+                  type: string
+                  example: "Cardoso"
+              gender:
+                  type: string
+                  enum: ['m', 'f', 'n']
+                  example: "m"
       responses:
         200:
           description: Child registered successfully.
@@ -157,8 +196,39 @@ paths:
             properties:
               child_token:
                 type: string
-              example:
-                child_token: 32_BYTES_TOKEN
+                example: 32_BYTES_TOKEN
+  /task:
+    get:
+      security: 
+        - BearerAuth: []
+      tags:
+        - parent
+
+      summary: Get all Tasks available (for all Childs) 
+      description: 
+      produces:
+        - application/json
+
+      responses:
+        200:
+          description: Successfully fetched all Childs
+          schema:
+            type: array 
+            properties:
+              items:
+                $ref: '#/definitions/Task' 
+
+            example:
+                - name: "Clean up your bedroom!" 
+                  description: "Pick up all the clothes on the floor, Florianinho. Pai te dá um chocolate depois."
+                  period: 3
+                  frequency: "all days" 
+                  is_active: 1
+                - name: "Wash the dishes" 
+                  description: "Help Bebel, your little catarrento."
+                  period: 2
+                  frequency: "all days" 
+                  is_active: 0 
 
   /child/login:
     post:
@@ -200,3 +270,32 @@ paths:
               error:
                 type: string
                 example: Permission Denied
+
+definitions:
+  Child:
+    type: object
+    properties:
+      access_token:
+        type: string
+      balance:
+        type: integer
+      gender:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+
+  Task:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      period:
+        type: integer
+      frequency:
+        type: string
+      is_visible:
+        type: integer
