@@ -96,7 +96,7 @@ def registerChild():
 def getTasks():
     session = create_session()
     parent_id = session.query(Parent).filter(Parent.email == get_jwt_identity()).first().id
-    tasks = session.query(Task).filter(task.id_parent_fk == parent_id).all()
+    tasks = session.query(Task).filter(Task.id_parent_fk == parent_id).all()
     
     response = [] 
 
