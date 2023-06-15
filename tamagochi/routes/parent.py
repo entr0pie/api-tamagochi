@@ -6,8 +6,6 @@ from sqlalchemy.exc import NoResultFound
 
 from bcrypt import hashpw, gensalt, checkpw 
 
-from flasgger import swag_from
-
 # from database.Database import SQLite3Manager
 from database.database import Parent, Child, Task, create_session
 
