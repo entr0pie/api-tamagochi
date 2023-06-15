@@ -15,7 +15,7 @@ The following technologies and libraries were used in the development of this pr
 - Flask
 - SQLAlchemy
 - Swagger UI
-- SQLite3
+- MariaDB
 - JWT
 - Bcrypt
 
