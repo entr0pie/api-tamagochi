@@ -36,6 +36,8 @@ class Task(Base):
     period = Column(Integer)  # What this refers to?
     frequency = Column(String)  # And this?
     is_visible = Column(Integer)
+    id_parent_fk = Column(Integer, ForeignKey('parent.id'))
+    
 
 def create_session():
     Session = sessionmaker(bind=engine)

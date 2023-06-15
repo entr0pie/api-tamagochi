@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS "task" (
 	"period"	INTEGER,
 	"frequency"	TEXT NOT NULL,
 	"is_visible"	INTEGER NOT NULL DEFAULT 0 CHECK("is_visible" IN (0, 1)),
-	PRIMARY KEY("id" AUTOINCREMENT)
+	"id_parent_fk" INTEGER NOT NULL,
+  PRIMARY KEY("id" AUTOINCREMENT),
+  FOREIGN KEY("id_parent_fk") REFERENCES "parent"("id") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "inventory" (
 	"id"	INTEGER NOT NULL UNIQUE,
