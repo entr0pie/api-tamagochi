@@ -130,8 +130,8 @@ paths:
         - BearerAuth: []
       tags:
         - parent
-      summary: Returns all Childs registered
-      description: Returns all Childs registered for a Parent
+      summary: Return all Childs registered
+      description: Return all Childs registered for a Parent
       produces:
         - application/json
 
@@ -155,6 +155,10 @@ paths:
                   gender: "f"
                   name: "Dona"
                   surname: "Nenê"
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
 
   /parent/child/register:
     post:
@@ -197,6 +201,10 @@ paths:
               child_token:
                 type: string
                 example: 32_BYTES_TOKEN
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
   /task:
     get:
       security: 
@@ -229,6 +237,10 @@ paths:
                   period: 2
                   frequency: "all days" 
                   is_active: 0 
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
 
   /child/login:
     post:
@@ -271,7 +283,32 @@ paths:
                 type: string
                 example: Permission Denied
 
+
 definitions:
+
+  # 401:
+  #   $ref: "#/definitions/MissingAuthHeader"
+  MissingAuthHeader:
+      description: (Auth) The JWT token was not sent by the user on the Authorization header (eg. Bearer eyJhbGciOiJIUz ...). See [login](#/parent/post_parent_login) for more info 
+      schema:
+        type: object
+        properties:
+          msg:
+            type: string
+            example: Missing Authorization Header
+  
+  # 422:
+  #   $ref: "#/definitions/UnprocessableEntity"
+              
+  UnprocessableEntity:
+    description: (Auth) The server failed to verify the token signature.
+    schema:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: Signature verification failed
+
   Child:
     type: object
     properties:
