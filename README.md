@@ -12,12 +12,13 @@ The Tamagochi application is an educational tool designed to assist children wit
 
 The following technologies and libraries were used in the development of this project:
 
-- Flask
-- SQLAlchemy
-- Swagger UI
-- MariaDB
-- JWT
-- Bcrypt
+- [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/)
+- [SQLAlchemy](https://www.sqlalchemy.org/)
+- [Swagger UI](https://swagger.io/tools/swagger-ui/)
+- [MariaDB](https://mariadb.org/)
+- [JWT](https://jwt.io/)
+- [Bcrypt](https://pypi.org/project/bcrypt/)
+- [Nginx](https://www.nginx.com/)
 
 ## Installation (Docker)
 
