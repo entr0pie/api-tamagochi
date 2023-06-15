@@ -1,17 +1,17 @@
-CREATE DATABASE Tamagochi IF NOT EXISTS; 
+CREATE DATABASE Tamagochi;
 USE Tamagochi;
 
-CREATE TABLE Parent IF NOT EXISTS (
+CREATE TABLE Parent (
   id int not null auto_increment,
   name varchar(255) not null,
   surname varchar(255) not null,
   email varchar(64) not null,
-  password varchar(32) not null,
+  password varchar(60) not null,
   gender enum('m', 'f', 'n') not null,
   PRIMARY KEY(id)
 );
 
-CREATE TABLE Child IF NOT EXISTS (
+CREATE TABLE Child (
   id int not null auto_increment,
   name varchar(255) not null,
   surname varchar(255) not null,
@@ -23,7 +23,7 @@ CREATE TABLE Child IF NOT EXISTS (
   FOREIGN KEY(parent) REFERENCES Parent(id)
 );
 
-CREATE TABLE Task IF NOT EXISTS (
+CREATE TABLE Task (
   id int not null auto_increment,
   name VARCHAR(64) not null,
   description VARCHAR(255) not null,
@@ -35,7 +35,7 @@ CREATE TABLE Task IF NOT EXISTS (
   FOREIGN KEY(parent) REFERENCES Parent(id)
 );
 
-CREATE TABLE Item IF NOT EXISTS (
+CREATE TABLE Item (
 	id int not null auto_increment,
   type enum('head', 'chest', 'feet', 'glasses', 'scenario') NOT NULL,
   description varchar(255) not null,
@@ -44,15 +44,16 @@ CREATE TABLE Item IF NOT EXISTS (
   PRIMARY KEY(id)
 );
 
-CREATE TABLE Inventory IF NOT EXISTS (
+CREATE TABLE Inventory (
   id int not null auto_increment,
   child int not null,
   item int not null,
   FOREIGN KEY(child) REFERENCES Child(id),
-  FOREIGN KEY(item) REFERENCES Item(id)
+  FOREIGN KEY(item) REFERENCES Item(id),
+  PRIMARY KEY(id)
 );
 
-CREATE TABLE Tamagochi IF NOT EXISTS (
+CREATE TABLE Tamagochi (
 	id int not null auto_increment,
   name varchar(64) not null,
   head int not null,
@@ -71,7 +72,7 @@ CREATE TABLE Tamagochi IF NOT EXISTS (
   FOREIGN KEY (child) REFERENCES Child (id)
 );
 
-CREATE TABLE Mood IF NOT EXISTS (
+CREATE TABLE Mood (
   id int not null auto_increment,
   name varchar(32) not null,
   category enum('positive', 'negative') not null,
@@ -79,7 +80,7 @@ CREATE TABLE Mood IF NOT EXISTS (
   PRIMARY KEY(id)
 );
 
-CREATE TABLE Reward IF NOT EXISTS (
+CREATE TABLE Reward (
   id int not null auto_increment,
   type int not null,
   value smallint unsigned not null,
@@ -87,7 +88,7 @@ CREATE TABLE Reward IF NOT EXISTS (
   PRIMARY KEY(id)
 );
 
-CREATE TABLE Log_Reward IF NOT EXISTS (
+CREATE TABLE Log_Reward (
   id int not null auto_increment,
   reward int not null,
   child int not null, 
@@ -97,7 +98,7 @@ CREATE TABLE Log_Reward IF NOT EXISTS (
   PRIMARY KEY(id)
 );
 
-CREATE TABLE Child_Task IF NOT EXISTS (
+CREATE TABLE Child_Task (
   id int not null auto_increment,
   child int not null,
   task int not null,
@@ -107,7 +108,7 @@ CREATE TABLE Child_Task IF NOT EXISTS (
   FOREIGN KEY(task) REFERENCES Task(id)
 );
 
-CREATE TABLE Log_Mood IF NOT EXISTS (
+CREATE TABLE Log_Mood (
   id int not null auto_increment,
   mood int not null,
   child int not null,

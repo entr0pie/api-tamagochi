@@ -12,7 +12,7 @@ from bcrypt import hashpw, gensalt, checkpw
 from database.database import Parent, Child, Task, create_session
 
 # db = SQLite3Manager("./database/database.db")
-parent = Blueprint("parent", __name__, url_prefix="/parent")
+parent = Blueprint("parent", __name__, url_prefix="/")
 
 jwt = JWTManager()
 
@@ -25,7 +25,7 @@ def login():
         parent = session.query(Parent).filter(Parent.email == data['email']).one()
         session.close()
         
-        if checkpw(data.get('password').encode(), parent.password):
+        if checkpw(data.get('password').encode(), parent.password.encode()):
             access_token = create_access_token(identity=data["email"])
             return jsonify(access_token=access_token)
     
@@ -59,7 +59,7 @@ def register():
 def getChilds():
     session = create_session()
     parent_id = session.query(Parent).filter(Parent.email == get_jwt_identity()).first().id
-    childs = session.query(Child).filter(Child.id_parent_fk == parent_id).all()
+    childs = session.query(Child).filter(Child.parent == parent_id).all()
     
     response = [] 
 
@@ -81,7 +81,7 @@ def registerChild():
     
     child = Child(name=data.get("name"), surname=data.get("surname"), 
                   access_token=token_hex(32), balance=0, gender=data.get("gender"),
-                  id_parent_fk=parent.id)
+                  parent=parent.id)
 
     access_token = child.access_token
 
@@ -96,7 +96,7 @@ def registerChild():
 def getTasks():
     session = create_session()
     parent_id = session.query(Parent).filter(Parent.email == get_jwt_identity()).first().id
-    tasks = session.query(Task).filter(Task.id_parent_fk == parent_id).all()
+    tasks = session.query(Task).filter(Task.parent == parent_id).all()
     
     response = [] 
 
@@ -118,7 +118,7 @@ def registerTask():
     
     task = Task(name=data.get("name"), description=data.get("description"), 
                 period=data.get("period"), frequency=data.get("frequency"), 
-                is_visible=data.get("is_visible"), id_parent_fk=parent.id)
+                is_visible=data.get("is_visible"), parent=parent.id)
 
     session.add(task)
     session.commit()
