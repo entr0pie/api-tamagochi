@@ -37,6 +37,18 @@ pip install -r requirements.txt
 python3 main.py
 ```
 
+4. (Optional) If you want to generate a new database, run:
+
+```
+sqlite3 -init database/source.sql database/tamagochi.db
+```
+
+Or through Python:
+
+```
+python3 -c "import sqlite3; sqlite3.connect('database/tamagochi.db').cursor().executescript(open('database/source.sql').read()).close()"
+```
+
 ## Documentation
 
 To see our current goals and more information about the project, visit our [Notion page](https://www.notion.so/Bichinho-virtual-c36336edc60b421b832e46b7d529ea31).
