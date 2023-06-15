@@ -7,7 +7,7 @@ from flask import Flask, redirect, send_from_directory
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
-from routes.parent import parent
+from blueprints.parent import parent
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = token_hex(64)
@@ -31,4 +31,4 @@ swaggerui = get_swaggerui_blueprint(FLASK_ROUTE, SWAGGER_FILE)
 app.register_blueprint(swaggerui)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=8000)

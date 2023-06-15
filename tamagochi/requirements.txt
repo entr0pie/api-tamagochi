@@ -3,3 +3,4 @@ bcrypt
 flask_jwt_extended
 flask_swagger_ui
 sqlalchemy
+pymysql

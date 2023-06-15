@@ -1,15 +1,12 @@
-#!/bin/python3
-
 from sqlalchemy import create_engine, ForeignKey, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 
-engine = create_engine("sqlite:///database/tamagochi.db")
+engine = create_engine("mysql+pymysql://root:root@mariadb/Tamagochi")
 
 Base = declarative_base()
-Base.metadata.reflect(bind=engine)
 
 class Parent(Base):
-    __tablename__ = Base.metadata.tables['parent']
+    __tablename__ = 'parent'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -19,7 +16,7 @@ class Parent(Base):
     gender = Column(String)
 
 class Child(Base):
-    __tablename__ = Base.metadata.tables['children']
+    __tablename__ = 'children'
     id = Column(Integer, primary_key=True)
     name = Column(String)
     surname = Column(String)
@@ -29,18 +26,16 @@ class Child(Base):
     id_parent_fk = Column(Integer, ForeignKey('parent.id'))
 
 class Task(Base):
-    __tablename__ = Base.metadata.tables['task']
+    __tablename__ = 'task'
     id = Column(Integer, primary_key=True)
     name = Column(String)
     description = Column(String)
-    period = Column(Integer)  # What this refers to?
-    frequency = Column(String)  # And this?
+    period = Column(Integer)
+    frequency = Column(String)
     is_visible = Column(Integer)
     id_parent_fk = Column(Integer, ForeignKey('parent.id'))
-    
 
 def create_session():
     Session = sessionmaker(bind=engine)
     return Session()
-
 

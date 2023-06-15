@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  mariadb:
+    
+    image: mariadb
+    
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=root
+      - MYSQL_USER=tandera
+      - MYSQL_PASSWORD=tandera
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+      - ./database/source-mysql.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - my-network
+  
+  parent:
+    build:
+      context: ./
+      dockerfile: ./parent/Dockerfile
+    ports:
+      - '8000:8000'
+    networks:
+      - my-network
+    depends_on:
+      - mariadb
+  
+  child: 
+     build: 
+       context: ./ 
+       dockerfile: ./child/Dockerfile
+     ports: 
+       - '9000:9000'
+     networks:
+       - my-network
+     depends_on:
+      - mariadb
+  
+  nginx:
+    image: nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - my-network
+    depends_on:
+      - mariadb
+
+networks:
+  my-network:
