@@ -1,4 +1,5 @@
 
+import logging as log
 from secrets import token_hex
 from flask import Blueprint, jsonify, request, current_app
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -54,11 +55,61 @@ def register():
 
     return { "status": "registered" }
 
+@parent.route("/profile", methods=["GET"])
+@jwt_required()
+def getParentInfo():
+    session = create_session()
+    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
+    
+    return {"email": parent.email, "name": parent.name, "surname": parent.surname, "gender":parent.gender}, 200
+
+@parent.route("/profile/edit", methods=["PUT"])
+@jwt_required()
+def update():
+    session = create_session()
+    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
+    
+    updated_data = request.get_json()
+
+    for key in updated_data:
+        setattr(parent, key, updated_data[key])
+    
+    session.commit()
+    session.close()
+
+    return { "status" : True }, 200
+
+@parent.route("/profile/delete", methods=["DELETE"])
+@jwt_required()
+def delete():
+    session = create_session()
+    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
+    
+    childs = session.query(Child).filter(Child.parent == parent.id).all()
+
+    for child in childs:
+        session.delete(child)
+
+    session.delete(parent)
+    session.commit()
+    session.close()
+
+    return '', 204
+
+@parent.route("/child/<access_token>", methods=["GET"])
 @parent.route("/child", methods=["GET"])
 @jwt_required()
-def getChilds():
+def getChilds(access_token=None):
     session = create_session()
     parent_id = session.query(Parent).filter(Parent.email == get_jwt_identity()).first().id
+    
+    if access_token:
+        child = session.query(Child).filter(and_(Child.parent == parent_id, Child.access_token == access_token)).first()
+        
+        return {"name": child.name, "surname":child.surname, 
+                "access_token":child.access_token, "balance":child.balance, 
+                "gender":child.gender}, 200
+    
     childs = session.query(Child).filter(Child.parent == parent_id).all()
     
     response = [] 
@@ -91,9 +142,45 @@ def registerChild():
     
     return {"child_token": access_token}
 
+@parent.route("/child/edit/<access_token>", methods=["PUT"])
+@jwt_required()
+def editChild(access_token):
+    session = create_session()
+    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
+   
+    if (child := session.query(Child).filter(Child.parent == parent.id).first()) is not None:
+        updated_data = request.get_json()
+
+        for key in updated_data:
+            setattr(child, key, updated_data[key])
+    
+        session.commit()
+        session.close()
+
+        return { "status" : True }, 200
+
+
+    return { "status" : False }, 403
+
+
+@parent.route("/child/delete/<access_token>", methods=["DELETE"])
+@jwt_required()
+def deleteChild(access_token=None):
+    session = create_session()
+
+    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
+    child = session.query(Child).filter(and_(Child.access_token == access_token, Child.parent == parent.id)).first()
+
+    session.delete(child)
+    session.commit()
+    session.close()
+
+    return '', 204
+
+@parent.route("/task/<id>", methods=["GET"])
 @parent.route("/task", methods=["GET"])
 @jwt_required()
-def getTasks():
+def getTask(id=None):
     session = create_session()
     parent_id = session.query(Parent).filter(Parent.email == get_jwt_identity()).first().id
     tasks = session.query(Task).filter(Task.parent == parent_id).all()
@@ -126,16 +213,40 @@ def registerTask():
 
     return {"status": True}
 
-@parent.route("/task/delete")
+@parent.route("/task/edit/<id>", methods=["PUT"])
 @jwt_required()
-def deleteTask():
+def editTask(id):
     data = request.get_json()
+    session = create_session()
+    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
+    
+    if (task := session.query(Task).filter(and_(Task.parent == parent.id, Task.id == id))) is not None:
+        updated_data = request.get_json()
+        
+        for key in updated_data:
+            setattr(task, key, updated_data[key])
 
+        session.commit()
+        session.close()
+    
+        return { "status" : True }, 200
 
-@parent.route("/task/edit")
+    return { "status" : False }, 403
+
+@parent.route("/task/delete/<id>")
 @jwt_required()
-def editTask():
+def deleteTask(id):
     data = request.get_json()
+    session = create_session()
+    parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
 
+    if (task := session.query(Task).filter(and_(Task.parent == parent.id, Task.id == id))) is not None:
+        session.delete(task)
+        session.commit()
+        session.close()
+        
+        return '', 204
+
+    return { "status" : False }, 403
 
 

@@ -9,11 +9,11 @@ schemes:
   - http
     
 tags:
-  - name: parent
-    description: Register Childs and create Tasks.
+  - name: Profile 
+    description: Create a account, login and edit your profile. 
   
-  - name: child
-    description: Customize your Tamagochi, complete Tasks and play minigames!
+  - name: Child
+    description: Manage Childs and create tasks!
 
 securityDefinitions:
   BearerAuth:
@@ -22,10 +22,10 @@ securityDefinitions:
     in: header
 
 paths:
-  /parent/register:
+  /register:
     post:
       tags: 
-        - parent
+        - Profile 
       summary: Register a new Parent
       description: 
       consumes:
@@ -78,10 +78,10 @@ paths:
             example:
                 status: registered
     
-  /parent/login:
+  /login:
     post:
       tags:
-        - parent
+        - Profile 
       summary: Authenticate as a Parent
       description:
       consumes:
@@ -124,48 +124,120 @@ paths:
               example:
                   error: Permission Denied
   
-  /parent/child:
+  /profile:
     get:
       security:
         - BearerAuth: []
       tags:
-        - parent
-      summary: Return all Childs registered
-      description: Return all Childs registered for a Parent
+        - Profile
+      summary: Retrieve the Profile Information
+      description:
       produces:
         - application/json
 
       responses:
         200:
-          description: Successfully fetched all Childs
+          description: Successfully returned profile Information
           schema:
-            type: array 
+            type: object
             properties:
-              items:
-                $ref: '#/definitions/Child' 
-
-            example:
-                - access_token: "0d114f0224d2893700483a1de3a01463fb984fb4b841f11d9076ee7bd5b370c6"
-                  balance: 1560 
-                  gender: "m"
-                  name: "Florianinho"
-                  surname: "Carrara"
-                - access_token: "c33126d5da425f23fe4b5a7a9c89a86d7ecdd450f6bcbe4d16694da395ce6ff1"
-                  balance: 99999
-                  gender: "f"
-                  name: "Dona"
-                  surname: "Nenê"
+              email:
+                type: string
+                example: "agostinho_carrara@gmail.com"
+              name:
+                type: string
+                example: "Agostinho"
+              surname:
+                type: string
+                example: "Carrara"
+              gender:
+                type: string
+                example: "m"
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
           $ref: "#/definitions/UnprocessableEntity"
 
-  /parent/child/register:
+  /profile/edit:
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - Profile
+      summary: Edit any profile atribute (name, surname, email, gender)
+      description:
+      produces:
+        - application/json
+      
+      parameters:
+      - name: Updated Field(s)
+        in: body
+        description: JSON object with the modified fields. In the following example all the fields are modified, but you can send just the altered ones. 
+        required: true
+        schema:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: Agostinho 
+                surname:
+                    type: string
+                    example: Carrara
+                email:
+                    type: string
+                    example: agostinho_carrara@gmail.com
+                password:
+                    type: string
+                    example: florianinhomeuamor  
+                gender:
+                    type: string
+                    enum: ['m', 'f', 'n']
+                    example: m
+      responses:
+        200:
+          description: Edited atribute successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                example: true
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+
+  /profile/delete:
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - Profile
+      summary: Delete the Parent account 
+      description: Delete the Parent account and all the childs attached to it. 
+      produces:
+        - application/json
+      
+      responses:
+        200:
+          description: Deleted accounts successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                example: true
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity" 
+
+  /child/register:
     post:
       security:
         - BearerAuth: []
       tags: 
-        - parent
+        - Child
       summary: Register a new Child
       description: 
       consumes:
@@ -201,6 +273,184 @@ paths:
               child_token:
                 type: string
                 example: 32_BYTES_TOKEN
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+  
+  /child:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Child 
+      summary: Return all Childs registered
+      description: Return all Childs registered for a Parent
+      produces:
+        - application/json
+
+      responses:
+        200:
+          description: Successfully fetched all Childs
+          schema:
+            type: array 
+            properties:
+              items:
+                $ref: '#/definitions/Child' 
+
+            example:
+                - access_token: "0d114f0224d2893700483a1de3a01463fb984fb4b841f11d9076ee7bd5b370c6"
+                  balance: 1560 
+                  gender: "m"
+                  name: "Florianinho"
+                  surname: "Carrara"
+                - access_token: "c33126d5da425f23fe4b5a7a9c89a86d7ecdd450f6bcbe4d16694da395ce6ff1"
+                  balance: 99999
+                  gender: "f"
+                  name: "Dona"
+                  surname: "Nenê"
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+
+  /child/{access_token}:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Child 
+      summary: Return the Child information based on the access_token
+      description: 
+      produces:
+        - application/json
+      
+      parameters:
+        - name: access_token
+          in: path
+          type: string
+          required: true
+          description: Access token for child
+
+      responses:
+        200:
+          description: Retrieved child's information 
+          schema:
+            type: object 
+            properties:
+              access_token:
+                type: string 
+                example: "0d114f0224d2893700483a1de3a01463fb984fb4b841f11d9076ee7bd5b370c6"
+              balance: 
+                type: integer 
+                example: 1560 
+              gender:
+                type: string 
+                example: "m"
+              name:
+                type: string 
+                example: "Florianinho"
+              surname: 
+                type: string
+                surname: "Carrara"
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+  
+  /child/edit/{access_token}:
+    put:
+      security:
+        - BearerAuth: []
+      tags:
+        - Child
+      summary: Edit any Child atribute (name, surname, gender)
+      description:
+      produces:
+        - application/json
+      
+      parameters:
+      - name: access_token
+        in: path
+        type: string
+        required: true
+        description: Access token for child 
+
+      - name: Updated Field(s)
+        in: body
+        description: JSON object with the modified fields. In the following example all the fields are modified, but you can send just the altered ones. 
+        required: true
+        schema:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: Florianinho 
+                surname:
+                    type: string
+                    example: Carrara
+                gender:
+                    type: string
+                    enum: ['m', 'f', 'n']
+                    example: m 
+      
+      responses:
+        200:
+          description: Edited atribute successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                example: true
+        403: 
+          description: Child doesen't belong to the Parent 
+          schema: 
+            type: object
+            properties:
+              status:
+                type: boolean
+                example: false
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+  
+  /child/delete/{access_token}: 
+     delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - Child
+      summary: Delete a child 
+      description:
+      produces:
+        - application/json
+      
+      parameters:
+        - name: access_token
+          in: path
+          type: string
+          required: true
+          description: Access token for child 
+      
+      responses:
+        200:
+          description: Deleted Child successfully 
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                example: true
+        403: 
+          description: Child doesen't belong to the Parent 
+          schema: 
+            type: object
+            properties:
+              status:
+                type: boolean
+                example: false
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:

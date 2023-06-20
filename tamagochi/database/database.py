@@ -7,7 +7,6 @@ Base = declarative_base()
 
 class Parent(Base):
     __tablename__ = 'Parent'
-
     id = Column(Integer, primary_key=True)
     name = Column(String)
     surname = Column(String)
