@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
-  title: Tamagochi API 
-  description: API for the Tamagochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
+  title: Tamagochi API (Parent) 
+  description: This documentation seeks the Parent routes on the Tamagochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
   version: 1.0.0
-host: localhost:5000
+host: parent.tamagochi.up.br 
 basePath: /
 schemes:
   - http
@@ -61,16 +61,8 @@ paths:
                     enum: ['m', 'f', 'n']
                     example: m
       responses:
-        200:
-          description: Account created successfully. Returns a JSON object with the status.
-          schema:
-            type: object 
-            properties:
-                status:
-                    type: string
-            example:
-                status: registered
-        
+        204:
+          description: Account created successfully.
         400:
           $ref: "#/definitions/MissingField"
         
@@ -203,14 +195,8 @@ paths:
                     enum: ['m', 'f', 'n']
                     example: m
       responses:
-        200:
+        204:
           description: Edited attribute successfully.
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: true
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -276,6 +262,8 @@ paths:
               child_token:
                 type: string
                 example: 32_BYTES_TOKEN
+        400:
+          $ref: "#/definitions/MissingField"
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -312,6 +300,7 @@ paths:
                   gender: "f"
                   name: "Dona"
                   surname: "Nenê"
+        
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -358,6 +347,14 @@ paths:
                 surname: "Carrara"
         401:
           $ref: "#/definitions/MissingAuthHeader"
+        404:
+          description: Child not found.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Child not found
         422:
           $ref: "#/definitions/UnprocessableEntity"
   
@@ -398,22 +395,16 @@ paths:
                     example: m 
       
       responses:
-        200:
+        204:
           description: Edited attribute successfully.
+        404:
+          description: Child not found.
           schema:
             type: object
             properties:
-              status:
-                type: boolean
-                example: true
-        403: 
-          description: Child doesn't belong to the Parent.
-          schema: 
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: false
+              error:
+                type: string
+                example: Child not found
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -438,22 +429,16 @@ paths:
           description: Access token for child
       
       responses:
-        200:
+        204:
           description: Deleted Child successfully.
+        404:
+          description: Child not found.
           schema:
             type: object
             properties:
-              status:
-                type: boolean
-                example: true
-        403: 
-          description: Child doesn't belong to the Parent.
-          schema: 
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: false
+              error:
+                type: string
+                example: Child not found
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -471,15 +456,10 @@ paths:
       produces:
         - application/json 
       responses:
-        200:
+        204:
           description: Task created successfully.
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: true
-        
+        400:
+          $ref: "#/definitions/MissingField"
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -569,7 +549,7 @@ paths:
             properties:
               error:
                 type: string
-                example: "There's no task with this id"
+                example: "Task not found"
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -596,26 +576,8 @@ paths:
 
       
       responses:
-        200:
+        204:
           description: Operation successful. 
-          schema:
-            type: object 
-            properties:
-              name: 
-                type: string 
-                example: "Clean up your bedroom!" 
-              description: 
-                type: string 
-                example: "Pick up all the clothes on the floor, Florianinho. Pai te dá um chocolate depois."
-              period: 
-                type: integer 
-                example: 3
-              frequency: 
-                type: string 
-                example: "all days" 
-              is_active:
-                type: integer 
-                example: 1
         404:
           description: Task not found. 
           schema:
@@ -623,7 +585,7 @@ paths:
             properties:
               error:
                 type: string
-                example: "There's no task with this id"
+                example: "Task not found"
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -647,7 +609,6 @@ paths:
           type: integer 
           required: true
           description: id of the Task 
-
       
       responses:
         204:
@@ -660,56 +621,13 @@ paths:
             properties:
               error:
                 type: string
-                example: "There's no task with this id"
+                example: "Task not found"
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
           $ref: "#/definitions/UnprocessableEntity"
 
-  /child/login:
-    post:
-      tags:
-        - child
-      summary: Login as Child
-      description: Login as a Child with the access token provided by the Parent. Make sure to register the Child first. 
-      consumes:
-        - application/json
-      produces:
-        - application/json
-
-      parameters:
-        - name: Access Token 
-          in: body
-          description: The 32 bytes access token of the Child.
-          required: true
-          schema:
-            type: object
-            properties:
-              access_token:
-                type: string
-                example: 32_BYTES_TOKEN
-      responses:
-        200:
-          description: Child logged successfully.
-          schema:
-            type: object
-            properties:
-              jwt_token:
-                type: string
-                example: JSON_WEB_TOKEN
-
-        403:
-          description: Access token is not valid.
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Permission Denied
-
-
 definitions:
-  
   # 400:
   #   $ref: "#/definitions/MissingField"
   MissingField:
@@ -720,6 +638,7 @@ definitions:
           error:
             type: string 
             example: Missing Fields 
+  
   # 401:
   #   $ref: "#/definitions/MissingAuthHeader"
   MissingAuthHeader:
@@ -733,7 +652,6 @@ definitions:
   
   # 422:
   #   $ref: "#/definitions/UnprocessableEntity"
-              
   UnprocessableEntity:
     description: (Auth) The server failed to verify the token signature.
     schema:
