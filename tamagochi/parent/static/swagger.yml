@@ -9,11 +9,14 @@ schemes:
   - http
     
 tags:
-  - name: Profile 
+  - name: Parent 
     description: Create a account, login and edit your profile. 
   
   - name: Child
-    description: Manage Childs and create tasks!
+    description: Manage your Childs.
+  
+  - name: Task
+    description: Create, read, update and delete the Children tasks.
 
 securityDefinitions:
   BearerAuth:
@@ -25,7 +28,7 @@ paths:
   /register:
     post:
       tags: 
-        - Profile 
+        - Parent 
       summary: Register a new Parent
       description: 
       consumes:
@@ -58,6 +61,15 @@ paths:
                     enum: ['m', 'f', 'n']
                     example: m
       responses:
+        200:
+          description: Account created successfully. Returns a JSON object with the status.
+          schema:
+            type: object 
+            properties:
+                status:
+                    type: string
+            example:
+                status: registered
         403:
           description: Account already registered. Returns a JSON object with the error.
           schema:
@@ -68,20 +80,10 @@ paths:
             example:
                 error: Account already registered
 
-        200:
-          description: Account created successfully. Returns a JSON object with the status.
-          schema:
-            type: object 
-            properties:
-                status:
-                    type: string
-            example:
-                status: registered
-    
   /login:
     post:
       tags:
-        - Profile 
+        - Parent 
       summary: Authenticate as a Parent
       description:
       consumes:
@@ -129,15 +131,15 @@ paths:
       security:
         - BearerAuth: []
       tags:
-        - Profile
-      summary: Retrieve the Profile Information
+        - Parent
+      summary: Retrieve the profile Information
       description:
       produces:
         - application/json
 
       responses:
         200:
-          description: Successfully returned profile Information
+          description: Successfully returned profile Information.
           schema:
             type: object
             properties:
@@ -163,8 +165,8 @@ paths:
       security:
         - BearerAuth: []
       tags:
-        - Profile
-      summary: Edit any profile atribute (name, surname, email, gender)
+        - Parent
+      summary: Edit any profile attribute (name, surname, email, gender)
       description:
       produces:
         - application/json
@@ -195,7 +197,7 @@ paths:
                     example: m
       responses:
         200:
-          description: Edited atribute successfully
+          description: Edited attribute successfully.
           schema:
             type: object
             properties:
@@ -212,21 +214,15 @@ paths:
       security:
         - BearerAuth: []
       tags:
-        - Profile
+        - Parent
       summary: Delete the Parent account 
       description: Delete the Parent account and all the childs attached to it. 
       produces:
         - application/json
       
       responses:
-        200:
-          description: Deleted accounts successfully
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: true
+        204:
+          description: Deleted accounts successfully.
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:
@@ -285,13 +281,13 @@ paths:
       tags:
         - Child 
       summary: Return all Childs registered
-      description: Return all Childs registered for a Parent
+      description: Return all Childs registered for a Parent.
       produces:
         - application/json
 
       responses:
         200:
-          description: Successfully fetched all Childs
+          description: Successfully fetched all Childs.
           schema:
             type: array 
             properties:
@@ -320,7 +316,7 @@ paths:
         - BearerAuth: []
       tags:
         - Child 
-      summary: Return the Child information based on the access_token
+      summary: Return Child's information based on the access_token
       description: 
       produces:
         - application/json
@@ -334,7 +330,7 @@ paths:
 
       responses:
         200:
-          description: Retrieved child's information 
+          description: Retrieved child's information.
           schema:
             type: object 
             properties:
@@ -364,7 +360,7 @@ paths:
         - BearerAuth: []
       tags:
         - Child
-      summary: Edit any Child atribute (name, surname, gender)
+      summary: Edit any Child attribute (name, surname, gender)
       description:
       produces:
         - application/json
@@ -374,7 +370,7 @@ paths:
         in: path
         type: string
         required: true
-        description: Access token for child 
+        description: Access token for child
 
       - name: Updated Field(s)
         in: body
@@ -396,7 +392,7 @@ paths:
       
       responses:
         200:
-          description: Edited atribute successfully
+          description: Edited attribute successfully.
           schema:
             type: object
             properties:
@@ -404,7 +400,7 @@ paths:
                 type: boolean
                 example: true
         403: 
-          description: Child doesen't belong to the Parent 
+          description: Child doesn't belong to the Parent.
           schema: 
             type: object
             properties:
@@ -432,11 +428,11 @@ paths:
           in: path
           type: string
           required: true
-          description: Access token for child 
+          description: Access token for child
       
       responses:
         200:
-          description: Deleted Child successfully 
+          description: Deleted Child successfully.
           schema:
             type: object
             properties:
@@ -444,7 +440,7 @@ paths:
                 type: boolean
                 example: true
         403: 
-          description: Child doesen't belong to the Parent 
+          description: Child doesn't belong to the Parent.
           schema: 
             type: object
             properties:
@@ -455,12 +451,39 @@ paths:
           $ref: "#/definitions/MissingAuthHeader"
         422:
           $ref: "#/definitions/UnprocessableEntity"
+  
+  /task/register:
+    post:
+      security:
+        - BearerAuth: []
+      tags: 
+        - Task
+
+      summary: Create a new Task 
+      description:
+      produces:
+        - application/json 
+      responses:
+        200:
+          description: Task created successfully.
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+                example: true
+        
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+
   /task:
     get:
       security: 
         - BearerAuth: []
       tags:
-        - parent
+        - Task 
 
       summary: Get all Tasks available (for all Childs) 
       description: 
@@ -469,7 +492,7 @@ paths:
 
       responses:
         200:
-          description: Successfully fetched all Childs
+          description: Successfully fetched all Tasks.
           schema:
             type: array 
             properties:
@@ -487,6 +510,150 @@ paths:
                   period: 2
                   frequency: "all days" 
                   is_active: 0 
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+
+  /task/{id}:
+    get:
+      security: 
+        - BearerAuth: []
+      tags:
+        - Task 
+
+      summary: Get a Task by id 
+      description: 
+      produces:
+        - application/json
+      
+      parameters:
+        - name: id
+          in: path
+          type: integer 
+          required: true
+          description: id of the Task 
+       
+      responses:
+        200:
+          description: Operation successful. 
+          schema:
+            type: object 
+            properties:
+              name: 
+                type: string 
+                example: "Clean up your bedroom!" 
+              description: 
+                type: string 
+                example: "Pick up all the clothes on the floor, Florianinho. Pai te dá um chocolate depois."
+              period: 
+                type: integer 
+                example: 3
+              frequency: 
+                type: string 
+                example: "all days" 
+              is_active:
+                type: integer 
+                example: 1
+        404:
+          description: Task not found. 
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "There's no task with this id"
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+ 
+  /task/edit/{id}:
+    put:
+      security: 
+        - BearerAuth: []
+      tags:
+        - Task 
+
+      summary: Update a Task by id
+      description: 
+      produces:
+        - application/json
+      
+      parameters:
+        - name: id
+          in: path
+          type: integer 
+          required: true
+          description: id of the Task 
+
+      
+      responses:
+        200:
+          description: Operation successful. 
+          schema:
+            type: object 
+            properties:
+              name: 
+                type: string 
+                example: "Clean up your bedroom!" 
+              description: 
+                type: string 
+                example: "Pick up all the clothes on the floor, Florianinho. Pai te dá um chocolate depois."
+              period: 
+                type: integer 
+                example: 3
+              frequency: 
+                type: string 
+                example: "all days" 
+              is_active:
+                type: integer 
+                example: 1
+        404:
+          description: Task not found. 
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "There's no task with this id"
+        401:
+          $ref: "#/definitions/MissingAuthHeader"
+        422:
+          $ref: "#/definitions/UnprocessableEntity"
+  
+  /task/delete/{id}:
+    delete:
+      security: 
+        - BearerAuth: []
+      tags:
+        - Task 
+
+      summary: Delete a Task by id 
+      description: 
+      produces:
+        - application/json
+      
+      parameters:
+        - name: id
+          in: path
+          type: integer 
+          required: true
+          description: id of the Task 
+
+      
+      responses:
+        204:
+          description: Operation successful. 
+        
+        404:
+          description: Task not found. 
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "There's no task with this id"
         401:
           $ref: "#/definitions/MissingAuthHeader"
         422:

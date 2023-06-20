@@ -7,13 +7,18 @@ from flask import Flask, redirect, send_from_directory
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
-from blueprints.parent import parent
+# from blueprints.parent import parent
+from blueprints.profile import profile 
+from blueprints.child import child
+from blueprints.task import task
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = token_hex(64)
 jwt = JWTManager(app)
 
-app.register_blueprint(parent)
+app.register_blueprint(profile)
+app.register_blueprint(child)
+app.register_blueprint(task)
 
 @app.route("/", methods=["GET"])
 def sendToDocs():
