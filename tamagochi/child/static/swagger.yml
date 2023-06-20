@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
-  title: Tamagochi API 
-  description: API for the Tamagochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
+  title: Tamagochi API (Child) 
+  description: This documentation seeks the Child routes on the Tamagochi project. All rights reserved to Universidade Positivo. See more information [here](https://github.com/entr0pie/api-tamagochi).
   version: 1.0.0
-host: localhost:5000
+host: child.tamagochi.up.br 
 basePath: /
 schemes:
   - http
