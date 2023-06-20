@@ -70,6 +70,10 @@ paths:
                     type: string
             example:
                 status: registered
+        
+        400:
+          $ref: "#/definitions/MissingField"
+        
         403:
           description: Account already registered. Returns a JSON object with the error.
           schema:
@@ -116,6 +120,9 @@ paths:
                       type: string
               example:
                   access_token: JWT_TOKEN 
+        400:
+          $ref: "#/definitions/MissingField"
+        
         403:
           description: Email or password incorrect. Returns a error message.
           schema:
@@ -702,7 +709,17 @@ paths:
 
 
 definitions:
-
+  
+  # 400:
+  #   $ref: "#/definitions/MissingField"
+  MissingField:
+      description: One of the required fields was not sent. 
+      schema:
+        type: object
+        properties:
+          error:
+            type: string 
+            example: Missing Fields 
   # 401:
   #   $ref: "#/definitions/MissingAuthHeader"
   MissingAuthHeader:
