@@ -2,14 +2,14 @@
 
 from secrets import token_hex 
 
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, request, current_app
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy import and_, or_ 
 from sqlalchemy.exc import NoResultFound
 
 from database.database import Parent, Child, create_session
 
-child = Blueprint("child", __name__, url_prefix="/child")
+child = Blueprint("child", __name__, url_prefix="/")
 jwt = JWTManager()
 
 @child.route("/login", methods=["POST"])
@@ -24,4 +24,4 @@ def login():
         return { "error": "Permission denied" }, 403
 
     jwt_token = create_access_token(identity=data.get("access_token"))
-    return jsonify(jwt_token=jwt_token)
+    return { "jwt_token": jwt_token }
