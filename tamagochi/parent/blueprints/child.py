@@ -9,6 +9,7 @@ from sqlalchemy.exc import NoResultFound
 from bcrypt import hashpw, gensalt, checkpw 
 
 from database.database import Parent, Child, Task, create_session
+from modules.internal import verifyFields
 
 child = Blueprint("child", __name__, url_prefix="/child")
 
@@ -20,6 +21,10 @@ def create():
     """Create a new Child 
     (http://parent.tamagochi.up.br/docs/#/Child/post_child_register)"""
     data = request.get_json()
+    
+    if not verifyFields(data, ('name', 'surname', 'gender')):
+        return { "error": "Missing fields" }, 400
+
     session = create_session()
     parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
     
@@ -48,11 +53,12 @@ def read(access_token=None):
     parent_id = session.query(Parent).filter(Parent.email == get_jwt_identity()).first().id
     
     if access_token:
-        child = session.query(Child).filter(and_(Child.parent == parent_id, Child.access_token == access_token)).first()
-        
-        return {"name": child.name, "surname":child.surname, 
-                "access_token":child.access_token, "balance":child.balance, 
-                "gender":child.gender}, 200
+        if (child := session.query(Child).filter(and_(Child.parent == parent_id, Child.access_token == access_token)).first()) is not None:
+            return {"name": child.name, "surname":child.surname, 
+                    "access_token":child.access_token, "balance":child.balance, 
+                    "gender":child.gender}, 200
+
+        return { "error" : "Child not found" }, 404
     
     childs = session.query(Child).filter(Child.parent == parent_id).all()
     
@@ -85,9 +91,9 @@ def edit(access_token):
         session.commit()
         session.close()
 
-        return { "status" : True }, 200
+        return '', 204
 
-    return { "status" : False }, 403
+    return { "error" : "Child not found" }, 404
 
 @child.route("/delete/<access_token>", methods=["DELETE"])
 @jwt_required()
@@ -105,5 +111,5 @@ def delete(access_token):
         session.close()
 
         return '', 204
-
-    return { "status" : False }, 200
+    
+    return { "error" : "Child not found" }, 404

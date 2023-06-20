@@ -7,6 +7,7 @@ from sqlalchemy.exc import NoResultFound
 from bcrypt import hashpw, gensalt, checkpw 
 
 from database.database import Parent, Child, Task, create_session
+from modules.internal import verifyFields 
 
 task = Blueprint("task", __name__, url_prefix="/task")
 
@@ -19,6 +20,10 @@ def create():
     (http://parent.tamagochi.up.br/docs/#/Task/post_task_register)"""
 
     data = request.get_json()
+    
+    if not verifyFields(data, ('name', 'description', 'period', 'frequency', 'is_visible')):
+        return { "error": "Missing fields" }, 400
+    
     session = create_session()
     parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
     
@@ -30,7 +35,7 @@ def create():
     session.commit()
     session.close()
 
-    return {"status": True}
+    return '', 204 
 
 @task.route("/<id>", methods=["GET"])
 @task.route("/", methods=["GET"])
@@ -51,7 +56,7 @@ def read(id=None):
     
             return task_data 
 
-        return { "error" : "There's no task with this id" }, 404
+        return { "error" : "Task not found" }, 404
 
     tasks = session.query(Task).filter(Task.parent == parent_id).all()
     
@@ -73,6 +78,10 @@ def update(id):
     (http://parent.tamagochi.up.br/docs/#/Task/put_task_edit__id_)"""
 
     data = request.get_json()
+   
+    if "id" in data.keys():
+        data.pop('id')
+
     session = create_session()
     parent = session.query(Parent).filter(Parent.email == get_jwt_identity()).first()
     
@@ -85,9 +94,9 @@ def update(id):
         session.commit()
         session.close()
     
-        return { "status" : True }, 200
+        return '', 204
 
-    return { "error" : "There's no task with this id" }, 404
+    return { "error" : "Task not found" }, 404
 
 @task.route("/delete/<id>", methods=["DELETE"])
 @jwt_required()
@@ -105,6 +114,6 @@ def delete(id):
         
         return '', 204
 
-    return { "error" : "There's no task with this id" }, 404
+    return { "error" : "Task not found" }, 404
 
 

@@ -62,7 +62,7 @@ def create():
     session.commit()
     session.close()
 
-    return { "status": "registered" }, 200
+    return '', 204
 
 @profile.route("/profile", methods=["GET"])
 @jwt_required()
@@ -95,7 +95,7 @@ def update():
     session.commit()
     session.close()
 
-    return { "status" : True }, 200
+    return '', 204
 
 @profile.route("/profile/delete", methods=["DELETE"])
 @jwt_required()
